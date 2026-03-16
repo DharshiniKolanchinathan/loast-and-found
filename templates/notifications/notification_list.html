@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - Smart Campus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Your Notifications</h4>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for notification in notifications %}
+                        <div class="list-group-item {% if not notification.is_read %}bg-light border-start border-primary border-4{% endif %}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 text-primary">{{ notification.title }}</h5>
+                                <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+                            </div>
+                            <p class="mb-1">{{ notification.message }}</p>
+                            {% if not notification.is_read %}
+                                <a href="{% url 'mark_notification_read' notification.pk %}" class="btn btn-sm btn-outline-secondary mt-2">Mark as read</a>
+                            {% endif %}
+                        </div>
+                    {% empty %}
+                        <div class="p-4 text-center text-muted">
+                            <p>No notifications yet.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat - {{ room.participant1.username }} & {{ room.participant2.username }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    #chat-log {
+        height: 400px;
+        overflow-y: scroll;
+        background-color: #f8f9fc;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .message {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 80%;
+    }
+    .message-sent {
+        background-color: #4e73df;
+        color: white;
+        margin-left: auto;
+    }
+    .message-received {
+        background-color: #eaecf4;
+        color: #3a3b45;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Chat with {% if user == room.participant1 %}{{ room.participant2.username }}{% else %}{{ room.participant1.username }}{% endif %}</h5>
+            </div>
+            <div class="card-body">
+                <div id="chat-log">
+                    {% for message in chat_messages %}
+                        <div class="message {% if message.sender == user %}message-sent{% else %}message-received{% endif %}">
+                            <small class="d-block fw-bold">{{ message.sender.username }}</small>
+                            {{ message.content }}
+                            <small class="d-block text-end opacity-75">{{ message.timestamp|date:"H:i" }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="input-group">
+                    <input id="chat-message-input" type="text" class="form-control" placeholder="Type your message...">
+                    <button id="chat-message-submit" class="btn btn-primary" type="button">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const roomId = "{{ room.id }}";
+    console.log('Connecting to room:', roomId);
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomId + '/'
+    );
+
+    chatSocket.onopen = function(e) {
+        console.log('Chat socket connected successfully');
+    };
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const chatLog = document.querySelector('#chat-log');
+        const isMe = data.sender === "{{ user.username }}";
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(isMe ? 'message-sent' : 'message-received');
+        
+        messageDiv.innerHTML = `
+            <small class="d-block fw-bold">${data.sender}</small>
+            ${data.message}
+            <small class="d-block text-end opacity-75">Now</small>
+        `;
+        
+        chatLog.appendChild(messageDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        if (message.trim() === '') return;
+        
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        messageInputDom.value = '';
+    };
+</script>
+{% endblock %}

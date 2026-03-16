@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Item - Smart Campus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ title }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field.errors }}
+                            {% if field.name == 'description' %}
+                                <textarea name="{{ field.name }}" class="form-control" rows="3"></textarea>
+                            {% elif field.name == 'category' %}
+                                <select name="{{ field.name }}" class="form-select">
+                                    {% for choice in field.field.choices %}
+                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% elif field.name == 'image' %}
+                                <input type="file" name="{{ field.name }}" class="form-control" accept="image/*" required>
+                            {% else %}
+                                <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}" class="form-control" {% if field.field.required %}required{% endif %}>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <small class="text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Submit Report</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ item.name }} - Found Item Details{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'found_items' %}">Found Items</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="card shadow-sm mb-4 border-success">
+            <div class="row g-0">
+                <div class="col-md-6">
+                    <img src="{{ item.image.url }}" class="img-fluid rounded-start h-100" alt="{{ item.name }}" style="object-fit: cover; min-height: 400px;">
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h2 class="card-title fw-bold text-success mb-0">{{ item.name }}</h2>
+                            <span class="badge bg-success fs-6">{{ item.category }}</span>
+                        </div>
+                        
+                        <p class="text-muted"><i class="bi bi-clock"></i> Reported on {{ item.date_reported|date:"F d, Y" }}</p>
+                        
+                        <div class="mb-4">
+                            <h5 class="fw-bold">Description</h5>
+                            <p>{{ item.description }}</p>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h6 class="fw-bold">Location</h6>
+                                <p>{{ item.location }}</p>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="fw-bold">Date Found</h6>
+                                <p>{{ item.date_item }}</p>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            {% if user == item.user %}
+                                <a href="{% url 'found_delete' item.pk %}" class="btn btn-outline-danger btn-lg">Delete This Report</a>
+                            {% elif user.is_authenticated %}
+                                <a href="{% url 'start_chat' item.user.id %}" class="btn btn-success btn-lg">Chat with Finder</a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-success btn-lg">Login to Contact Finder</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

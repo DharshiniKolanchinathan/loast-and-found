@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages - Smart Campus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">Your Conversations</h4>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for room in rooms %}
+                        {% with other_user=room.participant1 %}
+                            {% if other_user == user %}
+                                {% with other_user=room.participant2 %}
+                                    <a href="{% url 'chat_room' room.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                {{ other_user.username|slice:":1"|upper }}
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ other_user.username }}</h6>
+                                                <small class="text-muted">Click to open chat</small>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                {% endwith %}
+                            {% else %}
+                                <a href="{% url 'chat_room' room.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            {{ other_user.username|slice:":1"|upper }}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ other_user.username }}</h6>
+                                            <small class="text-muted">Click to open chat</small>
+                                        </div>
+                                    </div>
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            {% endif %}
+                        {% endwith %}
+                    {% empty %}
+                        <div class="p-5 text-center text-muted">
+                            <i class="bi bi-chat-dots fs-1 d-block mb-3"></i>
+                            <p>No active conversations yet.</p>
+                            <a href="{% url 'lost_items' %}" class="btn btn-primary mt-2">Browse Items to Start a Chat</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

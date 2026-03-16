@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Lost Items - Smart Campus{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Lost Items</h2>
+    </div>
+    <div class="col-md-4">
+        <form method="get" class="d-flex">
+            <input class="form-control me-2" type="search" name="q" placeholder="Search items..." value="{{ request.GET.q }}">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    {% for item in items %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text text-muted small">{{ item.description|truncatewords:20 }}</p>
+                    <ul class="list-unstyled mb-3">
+                        <li><strong>Location:</strong> {{ item.location }}</li>
+                        <li><strong>Date:</strong> {{ item.date_item }}</li>
+                        <li><strong>Category:</strong> {{ item.category }}</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-flex gap-2">
+                    <a href="{% url 'lost_detail' item.pk %}" class="btn btn-outline-primary flex-grow-1">Details</a>
+                    {% if user.is_authenticated and user != item.user %}
+                        <a href="{% url 'start_chat' item.user.id %}" class="btn btn-primary">Chat</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">No lost items found.</div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

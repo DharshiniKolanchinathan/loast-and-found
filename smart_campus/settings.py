@@ -45,9 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic', # For serving static files in dev with DEBUG=False if needed
     'django.contrib.staticfiles',
-    
-   
-    
     # Project apps
     'accounts',
     'items',

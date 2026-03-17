@@ -72,11 +72,12 @@
     {% if user.is_authenticated %}
     <script>
         const notifyprotocol = window.location.protocol === "https:" ? "wss://" : "ws://";
-
-        const notificationSocket = new WebSocket(
-            notifyprotocol + window.location.host + '/ws/notifications/'
+        const notifySocket = new WebSocket(
+            'wss://' + window.location.host + '/ws/notifications/'
             );
-        
+        notifySocket.onopen = function(e) {
+            console.log("Notification socket connected");
+        };
         notifySocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             const toastContainer = document.getElementById('toast-container');

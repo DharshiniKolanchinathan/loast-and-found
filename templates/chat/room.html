@@ -66,7 +66,7 @@
     const chatSocket = new WebSocket(
         wsprotocol + window.location.host + "/ws/chat/" + roomId + "/"
         );
-
+    
     chatSocket.onopen = function(e) {
         console.log('Chat socket connected successfully');
     };

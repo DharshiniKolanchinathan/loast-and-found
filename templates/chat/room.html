@@ -61,10 +61,10 @@
 <script>
     const roomId = "{{ room.id }}";
     console.log('Connecting to room:', roomId);
-    const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+    const wsprotocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 
     const chatSocket = new WebSocket(
-        protocol + window.location.host + "/ws/chat/" + roomId + "/"
+        wsprotocol + window.location.host + "/ws/chat/" + roomId + "/"
         );
 
     chatSocket.onopen = function(e) {

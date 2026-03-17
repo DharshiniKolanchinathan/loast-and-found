@@ -7,17 +7,17 @@ from django.core.asgi import get_asgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "smart_campus.settings")
 
-django.setup()   # IMPORTANT: load Django first
+django.setup()
 
 import chat.routing
+import notifications.routing
 
-application = ProtocolTypeRouter(
-    {
-        "http": get_asgi_application(),
-        "websocket": AuthMiddlewareStack(
-            URLRouter(
-                chat.routing.websocket_urlpatterns
-            )
-        ),
-    }
-)
+application = ProtocolTypeRouter({
+    "http": get_asgi_application(),
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            chat.routing.websocket_urlpatterns +
+            notifications.routing.websocket_urlpatterns
+        )
+    ),
+})

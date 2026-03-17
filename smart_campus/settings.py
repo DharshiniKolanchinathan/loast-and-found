@@ -28,6 +28,9 @@ SECRET_KEY = 'django-insecure-g#0sfwo!x2)&&^8!)51ixm@gb668tq7x#^xy0dwzxd@92hoft-
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://loast-and-found.onrender.com"
+]
 
 
 # Application definition

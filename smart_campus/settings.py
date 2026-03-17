@@ -153,6 +153,7 @@ EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.conso
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Channels Configuration
+# Channels Configuration
 REDIS_URL = config("REDIS_URL", default=None)
 
 if REDIS_URL:
@@ -160,7 +161,7 @@ if REDIS_URL:
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
-                "hosts": ["redis://default:gQAAAAAAASFvAAIncDI3ZDMxOTFhYWZlNjU0MzUyOWU2YmQ2ZDE2ZDI2NGZlZXAyNzQwOTU@capital-dolphin-74095.upstash.io:6379"],
+                "hosts": [REDIS_URL],
             },
         },
     }

@@ -27,10 +27,7 @@ SECRET_KEY = 'django-insecure-g#0sfwo!x2)&&^8!)51ixm@gb668tq7x#^xy0dwzxd@92hoft-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config(
-    "ALLOWED_HOSTS",
-    default="localhost,127.0.0.1,loast-and-found.onrender.com"
-).split(",")
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -154,7 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Channels Configuration
 # Channels Configuration
-REDIS_URL = config("REDIS_URL", default=None)
+
 
 REDIS_URL = config("REDIS_URL", default=None)
 

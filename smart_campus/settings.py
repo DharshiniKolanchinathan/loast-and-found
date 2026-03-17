@@ -9,9 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
-from pathlib import Path
 from decouple import config
+from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,7 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-g#0sfwo!x2)&&^8!)51ixm@gb668tq7x#^xy0dwzxd@92hoft-')
+SECRET_KEY = 'django-insecure-g#0sfwo!x2)&&^8!)51ixm@gb668tq7x#^xy0dwzxd@92hoft-'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
@@ -37,6 +37,7 @@ ALLOWED_HOSTS = config(
 
 INSTALLED_APPS = [
     'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,8 +46,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic', # For serving static files in dev with DEBUG=False if needed
     'django.contrib.staticfiles',
     
-    # Third party apps
-    'channels',
+   
     
     # Project apps
     'accounts',
@@ -86,7 +86,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'smart_campus.wsgi.application'
-ASGI_APPLICATION = 'smart_campus.asgi.application'
+ASGI_APPLICATION = "smart_campus.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -98,12 +98,6 @@ DATABASES = {
     }
 }
 
-# Channels Configuration
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
 
 
 # Password validation
@@ -157,13 +151,22 @@ EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.conso
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-from decouple import config
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [config("REDIS_URL")],
+# Channels Configuration
+REDIS_URL = config("REDIS_URL", default=None)
+
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": ["redis://default:gQAAAAAAASFvAAIncDI3ZDMxOTFhYWZlNjU0MzUyOWU2YmQ2ZDE2ZDI2NGZlZXAyNzQwOTU@capital-dolphin-74095.upstash.io:6379"],
+            },
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }

@@ -162,18 +162,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REDIS_URL = config("REDIS_URL", default=None)
 
 if REDIS_URL:
-    # Render Redis requires SSL if using the external URL (rediss://)
-    import ssl
-    is_rediss = REDIS_URL.startswith("rediss://")
-    
+    # If using rediss:// (external Render URL), ensure we handle certificates
+    if REDIS_URL.startswith("rediss://") and "ssl_cert_reqs" not in REDIS_URL:
+        if "?" in REDIS_URL:
+            REDIS_URL += "&ssl_cert_reqs=none"
+        else:
+            REDIS_URL += "?ssl_cert_reqs=none"
+            
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
-                "hosts": [{
-                    "address": REDIS_URL,
-                    "ssl": ssl.create_default_context(cert_reqs=ssl.CERT_NONE) if is_rediss else None,
-                }],
+                "hosts": [REDIS_URL],
             },
         },
     }

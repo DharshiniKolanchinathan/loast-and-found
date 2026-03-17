@@ -156,12 +156,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Channels Configuration
 REDIS_URL = config("REDIS_URL", default=None)
 
+REDIS_URL = config("REDIS_URL", default=None)
+
 if REDIS_URL:
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
-                "hosts": [REDIS_URL = config("REDIS_URL", default=None)],
+                "hosts": [REDIS_URL],
             },
         },
     }

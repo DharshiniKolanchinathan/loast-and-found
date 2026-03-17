@@ -9,6 +9,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_id = self.scope['url_route']['kwargs']['room_id']
         self.room_group_name = f'chat_{self.room_id}'
 
+        if self.scope["user"].is_anonymous:
+            print(f"Anonymous user tried to connect to room {self.room_id}")
+            await self.close()
+            return
+
+        print(f"User {self.scope['user']} connecting to room {self.room_id}")
+
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -16,6 +23,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+        print(f"User {self.scope['user']} connected to room {self.room_id}")
 
     async def disconnect(self, close_code):
         # Leave room group

@@ -27,9 +27,10 @@ SECRET_KEY = 'django-insecure-g#0sfwo!x2)&&^8!)51ixm@gb668tq7x#^xy0dwzxd@92hoft-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["loast-and-found.onrender.com", "localhost", "127.0.0.1", "*"]
 CSRF_TRUSTED_ORIGINS = [
-    "https://loast-and-found.onrender.com"
+    "https://loast-and-found.onrender.com",
+    "http://loast-and-found.onrender.com"
 ]
 
 # Render/Proxy settings
@@ -161,11 +162,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REDIS_URL = config("REDIS_URL", default=None)
 
 if REDIS_URL:
+    # Render Redis requires SSL if using the external URL (rediss://)
+    import ssl
+    is_rediss = REDIS_URL.startswith("rediss://")
+    
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
-                "hosts": [REDIS_URL],
+                "hosts": [{
+                    "address": REDIS_URL,
+                    "ssl": ssl.create_default_context(cert_reqs=ssl.CERT_NONE) if is_rediss else None,
+                }],
             },
         },
     }

@@ -6,24 +6,31 @@ from .models import ChatRoom, ChatMessage
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_id = self.scope['url_route']['kwargs']['room_id']
-        self.room_group_name = f'chat_{self.room_id}'
+        try:
+            print(f"DEBUG: Connect attempt for scope: {self.scope['path']}")
+            self.room_id = self.scope['url_route']['kwargs']['room_id']
+            self.room_group_name = f'chat_{self.room_id}'
 
-        if self.scope["user"].is_anonymous:
-            print(f"Anonymous user tried to connect to room {self.room_id}")
+            if self.scope["user"].is_anonymous:
+                print(f"DEBUG: REJECTED - Anonymous user for room {self.room_id}")
+                await self.close()
+                return
+
+            print(f"DEBUG: User {self.scope['user']} connecting to room {self.room_id}")
+            
+            # Join room group
+            await self.channel_layer.group_add(
+                self.room_group_name,
+                self.channel_name
+            )
+
+            await self.accept()
+            print(f"DEBUG: ACCEPTED - User {self.scope['user']} connected to room {self.room_id}")
+        except Exception as e:
+            print(f"DEBUG: EXCEPTION in connect: {str(e)}")
+            import traceback
+            traceback.print_exc()
             await self.close()
-            return
-
-        print(f"User {self.scope['user']} connecting to room {self.room_id}")
-
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
-
-        await self.accept()
-        print(f"User {self.scope['user']} connected to room {self.room_id}")
 
     async def disconnect(self, close_code):
         # Leave room group

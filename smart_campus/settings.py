@@ -32,6 +32,11 @@ CSRF_TRUSTED_ORIGINS = [
     "https://loast-and-found.onrender.com"
 ]
 
+# Render/Proxy settings
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+
 
 # Application definition
 
